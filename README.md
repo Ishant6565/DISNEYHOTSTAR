@@ -83,6 +83,14 @@ export default db;
 4. Once packages are installed, you can start this app using `npm start` or `yarn start`.
 5. Now app is fully configured and you can start using this app :+1:.
 
+### :raising_hand: Need Help?
+
+If you run into issues during installation or setup:
+
+- **GitHub Discussions** — [Open a Q&A discussion](https://github.com/sanidhyy/disney-clone/discussions/new?category=q-a) for setup and troubleshooting help.
+- **Email** — [sanidhyyy@gmail.com](mailto:sanidhyyy@gmail.com)
+- **Discord** — `@sanidhyy`
+
 ## :camera: Screenshots:
 
 ![Modern UI/UX](https://user-images.githubusercontent.com/71302066/201344366-63f2ae6b-b588-4cde-b85f-657b94ca5f3e.png "Modern UI/UX")
