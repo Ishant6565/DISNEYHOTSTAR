@@ -1,14 +1,14 @@
 import moviesData from "./disneyPlusMoviesData.json";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import "firebase/compat/storage";
 
 // Check if valid Firebase env config exists
-const hasValidConfig =
+const hasValidConfig = Boolean(
   process.env.REACT_APP_FIREBASE_API_KEY &&
-  process.env.REACT_APP_FIREBASE_API_KEY !== "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-
-let auth;
-let provider;
-let storage;
-let db;
+    process.env.REACT_APP_FIREBASE_API_KEY !== "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+);
 
 // Mock user state stored in localStorage for instant seamless experience
 const STORAGE_KEY = "disney_clone_active_user";
@@ -52,7 +52,6 @@ const mockAuth = {
   currentUser: getStoredUser(),
   onAuthStateChanged: (callback) => {
     authListeners.add(callback);
-    // Execute immediately with current state
     const current = getStoredUser();
     setTimeout(() => callback(current), 10);
     return () => authListeners.delete(callback);
@@ -111,13 +110,13 @@ const mockDb = {
   },
 };
 
+let auth;
+let provider;
+let storage;
+let db;
+
 if (hasValidConfig) {
   try {
-    const firebase = require("firebase/compat/app").default;
-    require("firebase/compat/auth");
-    require("firebase/compat/firestore");
-    require("firebase/compat/storage");
-
     const firebaseConfig = {
       apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
       authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -134,14 +133,12 @@ if (hasValidConfig) {
     provider = new firebase.auth.GoogleAuthProvider();
     storage = firebase.storage();
   } catch (err) {
-    console.warn("Failed to initialize live Firebase, falling back to mock provider:", err);
     auth = mockAuth;
     provider = {};
     storage = {};
     db = mockDb;
   }
 } else {
-  // Use mock adapter
   auth = mockAuth;
   provider = {};
   storage = {};
