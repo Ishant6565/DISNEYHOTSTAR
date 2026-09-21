@@ -104,6 +104,8 @@ export const viewersData = [
     name: "Pixar",
     imageSrc: PixarView,
     videoSrc: PixarVideo,
+    gifSrc:
+      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2h0MjIwaDN4ajluNmF3MDRydGV6bDV4b2xoM3AwY3BuYmxoNGhxciZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/Fpv75WRnN8qqs/giphy.gif",
   },
   {
     name: "Starwars",

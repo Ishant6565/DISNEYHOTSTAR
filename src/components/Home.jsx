@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import db, { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { selectUserName } from "../features/user/userSlice";
 import { setMovies } from "../features/movie/movieSlice";
 import {
   ImgSlider,
@@ -21,47 +20,44 @@ import { HomeBg } from "../assets/images";
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userName = useSelector(selectUserName);
-  let recommends = [];
-  let newDisneys = [];
-  let originals = [];
-  let trending = [];
 
   // check user login state
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
-        navigate("/");
+        navigate("/login");
       }
     });
-  }, [userName, navigate]);
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+    };
+  }, [navigate]);
 
-  // fetch movies from firebase
+  // fetch movies from database
   useEffect(() => {
-    db.collection("movies").onSnapshot((snapshot) => {
+    const unsubscribe = db.collection("movies").onSnapshot((snapshot) => {
+      const recommends = [];
+      const newDisneys = [];
+      const originals = [];
+      const trending = [];
+
       snapshot.docs.forEach((doc) => {
-        switch (doc.data().type) {
+        const data = doc.data();
+        switch (data.type) {
           case "recommend":
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            recommends = [...recommends, { id: doc.id, ...doc.data() }];
+            recommends.push({ id: doc.id, ...data });
             break;
-
           case "new":
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            newDisneys = [...newDisneys, { id: doc.id, ...doc.data() }];
+            newDisneys.push({ id: doc.id, ...data });
             break;
-
           case "original":
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            originals = [...originals, { id: doc.id, ...doc.data() }];
+            originals.push({ id: doc.id, ...data });
             break;
-
           case "trending":
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            trending = [...trending, { id: doc.id, ...doc.data() }];
+            trending.push({ id: doc.id, ...data });
             break;
           default:
-            console.log("Unwanted data recieved from firebase!");
+            break;
         }
       });
 
@@ -75,7 +71,11 @@ const Home = () => {
         })
       );
     });
-  }, [userName]);
+
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+    };
+  }, [dispatch]);
 
   return (
     <Container>

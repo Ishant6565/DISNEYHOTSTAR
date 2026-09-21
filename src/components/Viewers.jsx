@@ -18,10 +18,23 @@ const Viewers = () => {
         <Wrap key={`View-${i}`} title={view.name}>
           {/* Thumbnail Image */}
           <img src={view.imageSrc} alt={view.name} />
-          {/* Video */}
-          <video {...videoSettings}>
-            <source src={view.videoSrc} type="video/mp4" />
-          </video>
+          {/* Hover Media */}
+          {view.gifSrc ? (
+            <img
+              src={view.gifSrc}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/pixar-hover.gif";
+              }}
+              loading="eager"
+              alt={`${view.name} Animation`}
+              className="hover-media"
+            />
+          ) : (
+            <video {...videoSettings}>
+              <source src={view.videoSrc} type="video/mp4" />
+            </video>
+          )}
         </Wrap>
       ))}
     </Container>
@@ -52,13 +65,17 @@ const Wrap = styled.div`
     top: 0;
   }
 
-  video {
+  video,
+  img.hover-media {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
+    left: 0;
+    object-fit: cover;
     opacity: 0;
     z-index: 0;
+    transition: opacity 300ms ease;
   }
 
   &:hover {
@@ -67,8 +84,10 @@ const Wrap = styled.div`
     transform: scale(1.05);
     border-color: rgba(249, 249, 249, 0.8);
 
-    video {
+    video,
+    img.hover-media {
       opacity: 1;
+      z-index: 2;
     }
   }
 `;

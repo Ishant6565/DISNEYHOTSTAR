@@ -148,6 +148,10 @@ const Header = () => {
             {/* user image */}
             <UserImg
               src={userPhoto || UserAvatar}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = UserAvatar;
+              }}
               referrerPolicy="no-referrer"
               alt={userName || "Ishant"}
               title={userName || "Ishant"}

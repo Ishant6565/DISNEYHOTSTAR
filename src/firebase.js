@@ -14,6 +14,13 @@ let db;
 const STORAGE_KEY = "disney_clone_active_user";
 const authListeners = new Set();
 
+const defaultUser = {
+  displayName: "Ishant",
+  email: "ishant@disneyplus.com",
+  photoURL: "/user-avatar.png",
+  uid: "user-ishant-disney-01",
+};
+
 const notifyAuthListeners = (user) => {
   authListeners.forEach((listener) => {
     try {
@@ -27,10 +34,15 @@ const notifyAuthListeners = (user) => {
 const getStoredUser = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (err) {
-    return null;
-  }
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed) return parsed;
+    }
+  } catch (err) {}
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUser));
+  } catch (err) {}
+  return defaultUser;
 };
 
 const mockAuth = {
@@ -43,16 +55,10 @@ const mockAuth = {
     return () => authListeners.delete(callback);
   },
   signInWithPopup: async () => {
-    const demoUser = {
-      displayName: "Ishant",
-      email: "ishant@disneyplus.com",
-      photoURL: "/user-avatar.png",
-      uid: "user-ishant-disney-01",
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(demoUser));
-    mockAuth.currentUser = demoUser;
-    notifyAuthListeners(demoUser);
-    return { user: demoUser };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUser));
+    mockAuth.currentUser = defaultUser;
+    notifyAuthListeners(defaultUser);
+    return { user: defaultUser };
   },
   signOut: async () => {
     localStorage.removeItem(STORAGE_KEY);
