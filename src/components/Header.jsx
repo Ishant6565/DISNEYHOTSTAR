@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth, provider } from "../firebase";
 import {
   selectUserName,
-  selectUserPhoto,
   setSignOutState,
   setUserLoginDetails,
 } from "../features/user/userSlice";
@@ -22,7 +21,6 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userName = useSelector(selectUserName);
-  const userPhoto = useSelector(selectUserPhoto);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,9 +60,9 @@ const Header = () => {
   const setUser = (user) => {
     dispatch(
       setUserLoginDetails({
-        name: user.displayName,
-        email: user.email,
-        photo: user.photoURL,
+        name: user.displayName || "Ishant",
+        email: user.email || "ishant@disneyplus.com",
+        photo: "/user-avatar.png",
       })
     );
   };
@@ -147,10 +145,10 @@ const Header = () => {
           <SignOut>
             {/* user image */}
             <UserImg
-              src={userPhoto || UserAvatar}
+              src={UserAvatar}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = UserAvatar;
+                e.currentTarget.src = "/user-avatar.png";
               }}
               referrerPolicy="no-referrer"
               alt={userName || "Ishant"}
