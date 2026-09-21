@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { auth } from "../firebase";
-import { selectUserName } from "../features/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { auth, provider } from "../firebase";
+import { selectUserName, setUserLoginDetails } from "../features/user/userSlice";
 
 import { LoginBg, CTALogo1, CTALogo2 } from "../assets/images";
 
 // Login
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const userName = useSelector(selectUserName);
 
@@ -16,10 +17,37 @@ const Login = () => {
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
+        dispatch(
+          setUserLoginDetails({
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+          })
+        );
         navigate("/home");
       }
     });
-  }, [userName, navigate]);
+  }, [userName, navigate, dispatch]);
+
+  const handleSignUp = async () => {
+    try {
+      const result = await auth.signInWithPopup(provider);
+      if (result && result.user) {
+        dispatch(
+          setUserLoginDetails({
+            name: result.user.displayName,
+            email: result.user.email,
+            photo: result.user.photoURL,
+          })
+        );
+      }
+      navigate("/home");
+    } catch (error) {
+      console.error(error);
+      // Fallback direct navigate
+      navigate("/home");
+    }
+  };
 
   return (
     <Container>
@@ -28,7 +56,7 @@ const Login = () => {
           {/* CTA Logo 1 */}
           <CTALogoOne src={CTALogo1} alt="CTA Logo 1" />
           {/* Sign Up Button */}
-          <SignUp>GET ALL THERE</SignUp>
+          <SignUp onClick={handleSignUp}>GET ALL THERE</SignUp>
           {/* Description */}
           <Description>
             Get Premier Access to Raya and the Last Dragon for an additional fee
@@ -123,9 +151,12 @@ const SignUp = styled.button`
   padding: 16.5px 0;
   border: 1px solid transparent;
   border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 
   &:hover {
     background-color: #0483ee;
+    transform: scale(1.02);
   }
 `;
 

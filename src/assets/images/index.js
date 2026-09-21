@@ -26,6 +26,7 @@ import MarvelView from "./viewers-marvel.png";
 import NationalView from "./viewers-national.png";
 import PixarView from "./viewers-pixar.png";
 import StarwarsView from "./viewers-starwars.png";
+import UserAvatar from "./user-avatar.png";
 
 // Export assets
 export {
@@ -53,4 +54,5 @@ export {
   NationalView,
   PixarView,
   StarwarsView,
+  UserAvatar,
 };
